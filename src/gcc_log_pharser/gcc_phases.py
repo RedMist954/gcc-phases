@@ -10,8 +10,8 @@ import argparse
 import re
 import sys
 
-from _internal.trace_formatter import print_json
-from _internal.types import PhaseStat, UnitStat
+from ._internal.trace_formatter import print_json
+from ._internal.types import PhaseStat, UnitStat
 
 
 def noprint(*args): pass
@@ -67,11 +67,11 @@ def create_parser():
    return parser
 
 
-def main(argv):
+def main():
    global verbose, args
 
    parser = create_parser()
-   args = parser.parse_args(argv)
+   args = parser.parse_args()
 
    verbose = print if args.v else noprint
 
@@ -342,4 +342,4 @@ def print_units(units, units2=None):
 
 #================================================== script entry point
 if __name__ == "__main__" :
-   main(sys.argv[1:])
+   main()

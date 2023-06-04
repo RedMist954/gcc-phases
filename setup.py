@@ -14,7 +14,7 @@ setup(
     package_dir={"": "src"},
     entry_points={
         "console_scripts": [
-            "gcc_phases=gcc_log_pharser.gcc_phases:main",
+            "gcc-phases=gcc_log_pharser.gcc_phases:main",
         ]
     },
     author="RedMist",
