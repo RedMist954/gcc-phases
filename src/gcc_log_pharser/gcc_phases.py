@@ -9,7 +9,10 @@
 import argparse
 import re
 import sys
-from trace_formatter import print_json
+
+from _internal.trace_formatter import print_json
+from _internal.types import PhaseStat, UnitStat
+
 
 def noprint(*args): pass
 verbose = noprint
@@ -90,19 +93,6 @@ def main(argv):
          sys.stderr.write('trace format isnt define for two log files')
       else:
          print_units(units, units2)
-
-
-class PhaseStat:
-   def __init__(self, seconds, percents):
-      self.wall_seconds = seconds
-      self.wall_percents = percents
-
-
-class UnitStat:
-   def __init__(self, path):
-      self.path = path
-      self.phases = dict()
-      self.wall_total = None
 
 
 class Regexes:
@@ -258,30 +248,6 @@ def unit_sort_value(unit):
    return phase.wall_percents if (
            phase.wall_seconds >= getarg('min_valuable_phase_time') and
            unit.wall_total >= getarg('min_valuable_unit_time')) else 0
-
-
-# def units_diff_sort_value(unit1, unit2):
-#    def get(u, attr, default=None):
-#       return getattr(u, attr) if u else default
-#    def diff(u1, u2, attr):
-#       return get(u1, attr, 0) - get(u2, attr, 0)
-#    key = getarg('sort')
-#    if key == 'total':
-#       return diff(unit2, unit1, 'wall_total')
-#    if key == 'path':
-#       return get(unit1, 'path') or get(unit2, 'path')
-#    phase1 = get(unit1, 'phases', dict()).get(key.rstrip('%'), None)
-#    phase2 = get(unit2, 'phases', dict()).get(key.rstrip('%'), None)
-#    if not phase1 and not phase2:
-#       return 0
-#    if '%' not in key:
-#       return diff(phase2, phase1, 'wall_seconds')
-#    if (get(phase1, 'wall_seconds') >= getarg('min_valuable_phase_time') and
-#        get(phase2, 'wall_seconds') >= getarg('min_valuable_phase_time') and
-#        get(unit1, 'wall_total') >= getarg('min_valuable_unit_time') and
-#        get(unit2, 'wall_total') >= getarg('min_valuable_unit_time')):
-#       return diff(phase2, phase1, 'wall_percents')
-#    return 0
 
 
 def phase_sort_value(name, phase):

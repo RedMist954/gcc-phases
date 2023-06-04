@@ -2,22 +2,7 @@ import re
 from enum import Enum
 import json
 
-
-class Leaf:
-    def __init__(self, name=''):
-        self.name = name
-        self.start_time = 0.0
-        self.end_time = 0.0
-        self.total = 0.0
-        self.phases = dict()
-
-
-class Node:
-    def __init__(self, name=''):
-        self.name = name
-        self.children = dict()
-        self.start_time = 0.0
-        self.end_time = 0.0
+from .types import Leaf, Node
 
 
 def _convert_path_to_list(path):
