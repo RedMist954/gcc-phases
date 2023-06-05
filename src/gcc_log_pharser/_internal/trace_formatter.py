@@ -31,7 +31,7 @@ def _convert_flat_data_to_tree(units: dict) -> Node:
 
             if i == len(path_list) - 1:
                 leaf = Leaf(path_segment)
-                # leaf.phases = unit.phases
+                leaf.phases = unit.phases
                 leaf.total = unit.wall_total
 
                 current_node.children[path_segment] = leaf
@@ -85,7 +85,7 @@ def _get_json_trace(tree_units):
     return {'displayTimeUnit': 'ns', 'traceEvents': _get_events_list(tree_units)}
 
 
-def print_json(units):
+def print_json(units, result_thread):
     tree_units = _convert_flat_data_to_tree(units)
     _calculate_time(tree_units)
-    print(json.dumps(_get_json_trace(tree_units), cls=EncodeStudent))
+    result_thread(json.dumps(_get_json_trace(tree_units), cls=EncodeStudent))
