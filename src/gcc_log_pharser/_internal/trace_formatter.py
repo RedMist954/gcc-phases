@@ -5,6 +5,11 @@ import json
 from .types import Leaf, Node
 
 
+class EncodeStudent(json.JSONEncoder):
+    def default(self, o):
+        return o.__dict__
+
+
 def _convert_path_to_list(path):
     path_list = re.sub(r'/CMakeFiles/.*?.dir', '', path).split('/')
 
@@ -83,4 +88,4 @@ def _get_json_trace(tree_units):
 def print_json(units):
     tree_units = _convert_flat_data_to_tree(units)
     _calculate_time(tree_units)
-    print(json.dumps(_get_json_trace(tree_units)))
+    print(json.dumps(_get_json_trace(tree_units), cls=EncodeStudent))
