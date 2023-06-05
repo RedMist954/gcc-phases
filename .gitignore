@@ -1,0 +1,17 @@
+*dist
+*egg-info
+debug/
+devel/
+build/
+doxygen/
+tmp/
+
+# Folders
+BUILD/
+Debug/
+Realese/
+out/
+Testing/
+
+# Python unittest output
+.coverage

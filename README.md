@@ -1,26 +1,42 @@
 # gcc-phases
+
 The script scans build log files of GCC running with the `-ftime-report` flag,
 and output compilation phases timings for each unit and across all the units,
 with the different sort and filtering possibilites. It can also produce comparison
-output provided two log files instead of one. 
+output provided two log files instead of one.
 By default it uses CMake log file format, but it has the `--unit-line` command
 line argument to allow parsing arbitrary log files.
 
 The script may be useful to analyse what takes most time during compilation.
 
+## Install
+
+Build package:
+
+```
+> python3 setup.py bdist_wheel
+```
+
+Install package:
+
+```
+> pip3 install ./dist/*.whl
+```
 
 ## Preparation
-To produce the needed log you first need to add the `-H` and `-ftime-report` flags to GCC.
-In CMakeLists.txt it can be done by `add_compile_options(-H -ftime-report)` CMake command.  
 
+To produce the needed log you first need to add the `-H` and `-ftime-report` flags to GCC.
+In CMakeLists.txt it can be done by `add_compile_options(-H -ftime-report)` CMake command.
 
 ## Usage
+
 After building your project and having the build log file, you can run the script like this
 
 ```
-> gcc-phases.py log.txt
+> gcc-phases log.txt
 ```
-(You may need to prefix that command with `python3` or `py -3` depending on how 
+
+(You may need to prefix that command with `python3` or `py -3` depending on how
 Python is set up on your system).
 
 Below is an example of possible output (with some lines dropped down):
@@ -51,15 +67,16 @@ PHASES SUMMARY
   TOTAL : 2118.4 s. = 35.3 m. 
 ```
 
-
 ## Comparing two logs
+
 You can also pass two log files to the script and it will output information
 form both for comparison. It may be useful to analyse the impact of
 changes done to the build process, like switch to using precompiled headers.
 
 ```
-> gcc-phases.py log.txt log2.txt
+> gcc-phases log.txt log2.txt
 ```
+
 Below is an example of possible output (with some lines dropped down):
 
 ```
@@ -90,11 +107,14 @@ PHASES SUMMARY
 ```
 
 ## Using with different log formats
-By default the script assumes the log is in CMake format. 
+
+By default the script assumes the log is in CMake format.
 Specifically, it assumes that each unit's part in the log starts with line, ending with
+
 ```
 [  1%] Building CXX object path/source.cpp.o
 ```
+
 When the script gets this line during parsing process, it parses the source unit path and starts
 gathering statistics for this unit.
 To make the script use another format of such a line, you need to use command line argument `--unit-line`,
@@ -102,20 +122,28 @@ which allows to pass Python regular expression, wchich then will we used in re.s
 The regular expression needs to contain one capture group for unit's path.
 E.g., the default unit line format for CMake is `'\[[\d ]+%\] Building [^ ]+ object (.+)$'`.
 
+## Google Trace Format
+
+Use tool wit `--trace-format` flag
+and https://ui.perfetto.dev/ for visualization:
+![Example](./docs/example.png)
 
 ## Command line help
+
 The script supports several other command line parameters, which may be useful.
+
 ```
-> python3 --help
-usage: gcc-phases.py [-h] [--include INCLUDE] [--exclude EXCLUDE]
-                     [--include-phase INCLUDE_PHASE]
-                     [--exclude-phase EXCLUDE_PHASE] [--from-line FROM_LINE]
-                     [--to-line TO_LINE] [--sort SORT] [--desc] [--asc]
-                     [--limit LIMIT] [--sort-phases {time,name}]
-                     [--min-valuable-unit-time MIN_VALUABLE_UNIT_TIME]
-                     [--min-valuable-phase-time MIN_VALUABLE_PHASE_TIME]
-                     [--unit-line UNIT_LINE] [-v]
-                     path [path2]
+> gcc-phases -h
+usage: gcc-phases [-h] [--include INCLUDE] [--exclude EXCLUDE]
+                  [--include-phase INCLUDE_PHASE]
+                  [--exclude-phase EXCLUDE_PHASE] [--from-line FROM_LINE]
+                  [--to-line TO_LINE] [--sort SORT] [--desc] [--asc]
+                  [--limit LIMIT] [--sort-phases {time,name}]
+                  [--min-valuable-unit-time MIN_VALUABLE_UNIT_TIME]
+                  [--min-valuable-phase-time MIN_VALUABLE_PHASE_TIME]
+                  [--unit-line UNIT_LINE] [-v] [--trace-format]
+                  [--save_path SAVE_PATH]
+                  path [path2]
 
 Parses CMake log (or other type, if provided with appropriate --unit-line) and
 prints GCC compilation phases (produced by GCC -ftime-report flag).
@@ -163,4 +191,7 @@ optional arguments:
                         for the unit's path; default is CMake log line pattern
                         '\[[\d ]+%\] Building [^ ]+ object (.+)$'
   -v                    verbose mode
+  --trace-format        convert output in to google trace event format
+  --save_path SAVE_PATH
+                        Path to save file (otherwise console)
 ```
